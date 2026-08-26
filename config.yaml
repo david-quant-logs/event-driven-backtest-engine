@@ -1,0 +1,33 @@
+# Default job used by `python run.py`.
+
+initial_capital: 1000000
+fill_on: next_open          # next_open | next_close
+delay_bars: 0               # extra bars after T+1 inherent delay
+slippage_type: percent      # percent | ticks
+slippage_value: 0.001       # 0.1% or number of ticks
+tick_size: 0.001
+commission_rate: 0.0
+lot_size: 100               # A-share ETF board lot; crypto examples override to 0 (fractional)
+
+etf:
+  symbols:
+    - "510300"              # 沪深300ETF
+    - "510500"              # 中证500ETF
+  start: "2019-01-01"
+  end: null
+  fast: 20
+  slow: 60
+  ma_type: sma              # sma | ema
+  side: long_only           # long_only | long_short
+
+crypto:
+  symbol: BTC_USDT
+  interval: 1d
+  start: "2019-01-01"
+  fast: 12
+  slow: 26
+  ma_type: ema
+  side: long_only
+  lot_size: 0
+  tick_size: 0.01
+  initial_capital: 10000
