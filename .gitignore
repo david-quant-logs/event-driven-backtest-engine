@@ -28,6 +28,10 @@ output/charts/*
 !output/charts/.gitkeep
 !output/charts/*_equity.png
 
+docs/charts/*
+!docs/charts/.gitkeep
+!docs/charts/*.png
+
 .idea/
 .vscode/
 *.swp

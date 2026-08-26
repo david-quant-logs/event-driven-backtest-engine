@@ -1,8 +1,8 @@
 # event-driven-backtest-engine
 
 可审计的事件驱动回测引擎：数据 → 信号 → 成交 → 绩效。基于此前
-[quant-data-pipeline](https://github.com/david-quant-lab/quant-data-pipeline)
-的拉取经验继续做回测。
+[quant-data-pipeline](https://github.com/david-quant-logs/quant-data-pipeline)
+的拉取经验做成独立项目（第 1–2 周）。
 
 数据源：
 
@@ -18,6 +18,8 @@
 | 延迟 | `delay_bars` 在 T+1 之外再推迟 N 根 K 线 |
 | 复权 | 默认 **前复权**，说明见 [docs/ADJUSTMENT.md](docs/ADJUSTMENT.md) |
 | 停牌 | `volume=0` → `suspended`，成交跳过 |
+| 费率 | 可配置费率矩阵（股票 / ETF / 永续） |
+| 滑点 | 固定比例、成交量冲击、波动率调整 |
 
 ## 快速开始
 
@@ -28,18 +30,16 @@ pip install -r requirements.txt
 python run.py
 ```
 
+第 2 周完整绩效报告（含滑点敏感性）：
+
+```powershell
+python examples/run_performance_report.py
+```
+
 只跑单元测试：
 
 ```powershell
 python -m pytest -q
-```
-
-单独示例：
-
-```powershell
-python examples/run_etf_dual_ma.py
-python examples/run_crypto_dual_ma.py
-python examples/run_lookahead_check.py
 ```
 
 ## 默认回测标的
@@ -47,44 +47,36 @@ python examples/run_lookahead_check.py
 1. **ETF 组合**：沪深300ETF `510300` + 中证500ETF `510500`，自 2019-01-01（≥5 年），20/60 日 SMA 双均线，多标的等权。
 2. **加密货币**：`BTC_USDT` 日线（Gate，失败回退 Binance），12/26 日 EMA。
 
-输出目录：
-
-```
-output/reports/etf_dual_ma/     # 资金曲线、交易明细、持仓、指标
-output/reports/crypto_dual_ma/
-output/reports/lookahead_detection.md
-output/charts/*_equity.png
-docs/LOOKAHEAD_REPORT.md        # 前视偏差检测报告（交付物）
-```
-
 ## 模块结构
 
 ```
-backtest/
-  data/          # 拉取、复权、停牌、质量检查
-  signals/       # 双均线 + 执行移位
-  execution/     # 滑点、成交价模式
-  engine.py      # 多标的事件循环
-  metrics.py     # 组合 / 单标的绩效
-  lookahead.py   # 完美信号前视检测
-  report.py      # CSV / Markdown / 图
-examples/        # 两个策略示例 + 检测脚本
+backtest/                 # 事件驱动引擎（数据/信号/成交）
+performance_analytics/    # 第2周：费率、滑点、完整指标、报告
+examples/
 tests/
 docs/
 ```
 
+### performance_analytics
+
+- `fees.py` — 费率矩阵（万2.5+印花税 / ETF 万1无印花税 / Maker·Taker·资金费）
+- `slippage.py` — 固定比例、volume participation、波动率调整滑点
+- `metrics.py` — Sortino / Omega / 滚动夏普 / Bootstrap / 基准对比
+- `sensitivity.py` — 滑点敏感性表
+- `distribution.py` — 偏度峰度与夏普适用性讨论
+- `report.py` — 一键 Markdown 绩效报告（资金曲线、回撤、月度热力图）
+
 ## 前视偏差检测
 
-`backtest/lookahead.py` 用「知道下一根收盘涨跌」的完美信号对比：
+见 [docs/LOOKAHEAD_REPORT.md](docs/LOOKAHEAD_REPORT.md)。
 
-- **泄漏路径**：信号不移位，当日收盘成交 → 应出现过高收益
-- **安全路径**：强制 `shift(1)` + T+1 开盘成交 → 收益显著更低
+## 第 2 周绩效报告
 
-若安全路径仍接近泄漏路径，判定引擎存在漏洞。报告见 `docs/LOOKAHEAD_REPORT.md`。
+见 [docs/DUAL_MA_PERFORMANCE_REPORT.md](docs/DUAL_MA_PERFORMANCE_REPORT.md)（含滑点敏感性与收益分布讨论）。
 
 ## 配置
 
-编辑 `config.yaml`。可选 `TUSHARE_TOKEN`（复制 `.env.example` → `.env`）作为 ETF 拉取最后回退。
+编辑 `config.yaml`（`fee_profile`、`slippage_type` 等）。可选 `TUSHARE_TOKEN`。
 
 ## 许可
 

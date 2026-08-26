@@ -11,6 +11,8 @@ from backtest.engine import PortfolioEngine
 from backtest.execution import ExecutionConfig
 from backtest.report import write_backtest_outputs
 from backtest.signals import DualMAConfig, generate_dual_ma_signals
+from performance_analytics.fees import FeeMatrix, default_fee_matrix
+from performance_analytics.slippage import SlippageModel
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -44,21 +46,27 @@ def run(refresh: bool = False) -> dict:
         )
         signals[sym] = sf.signals
 
+    fee_profile = getattr(cfg.engine, "fee_profile", "ashare_etf")
     engine = PortfolioEngine(
         initial_capital=cfg.engine.initial_capital,
         execution=ExecutionConfig(
             fill_on=cfg.engine.fill_on,
-            slippage_type=cfg.engine.slippage_type,
-            slippage_value=cfg.engine.slippage_value,
-            tick_size=cfg.engine.tick_size,
-            commission_rate=cfg.engine.commission_rate,
             lot_size=cfg.engine.lot_size,
+            slippage_model=SlippageModel(
+                mode=cfg.engine.slippage_type,
+                value=cfg.engine.slippage_value,
+                tick_size=cfg.engine.tick_size,
+            ),
+            fee_matrix=FeeMatrix(profiles=default_fee_matrix(), default_profile=fee_profile),
+            fee_profile=fee_profile,
+            symbol_fee_profiles={s: fee_profile for s in panel},
         ),
     )
     result = engine.run(panel, signals)
     paths = write_backtest_outputs(result, ROOT / cfg.output_dir, run_name="etf_dual_ma")
     print("Portfolio metrics:", result.metrics)
     print("Per symbol:", result.per_symbol_metrics)
+    print(f"Total fees: {result.total_fees:,.2f}")
     print("Wrote:", {k: str(v) for k, v in paths.items()})
     return {"result": result, "paths": paths}
 

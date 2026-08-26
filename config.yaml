@@ -3,11 +3,12 @@
 initial_capital: 1000000
 fill_on: next_open          # next_open | next_close
 delay_bars: 0               # extra bars after T+1 inherent delay
-slippage_type: percent      # percent | ticks
-slippage_value: 0.001       # 0.1% or number of ticks
+slippage_type: percent      # percent | ticks | volume | vol_adjusted
+slippage_value: 0.0005      # 5 bps baseline
 tick_size: 0.001
-commission_rate: 0.0
-lot_size: 100               # A-share ETF board lot; crypto examples override to 0 (fractional)
+commission_rate: 0.0        # prefer fee_matrix profiles below
+lot_size: 100               # A-share ETF board lot; crypto examples override to 0
+fee_profile: ashare_etf     # ashare_stock | ashare_etf | gate_perp | zero
 
 etf:
   symbols:
@@ -31,3 +32,4 @@ crypto:
   lot_size: 0
   tick_size: 0.01
   initial_capital: 10000
+  fee_profile: gate_perp

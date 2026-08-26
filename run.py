@@ -1,4 +1,4 @@
-"""One-shot runner: data pull + two strategy examples + look-ahead report."""
+"""One-shot runner: week-1 examples + optional week-2 performance report."""
 
 from __future__ import annotations
 
@@ -12,11 +12,16 @@ if str(ROOT) not in sys.path:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Run the week-1 backtest deliverables.")
+    parser = argparse.ArgumentParser(description="Run backtest deliverables.")
     parser.add_argument("--refresh", action="store_true", help="Re-download market data")
     parser.add_argument("--skip-crypto", action="store_true")
     parser.add_argument("--skip-etf", action="store_true")
     parser.add_argument("--synthetic-lookahead", action="store_true")
+    parser.add_argument(
+        "--performance-report",
+        action="store_true",
+        help="Also run week-2 ETF dual-MA full performance report",
+    )
     args = parser.parse_args(argv)
 
     print("=== event-driven-backtest-engine ===")
@@ -32,6 +37,12 @@ def main(argv: list[str] | None = None) -> int:
     from examples.run_lookahead_check import run as run_la
 
     run_la(use_live_etf=not args.synthetic_lookahead, refresh=args.refresh)
+
+    if args.performance_report:
+        from examples.run_performance_report import run as run_perf
+
+        run_perf(refresh=args.refresh)
+
     print("All done.")
     return 0
 

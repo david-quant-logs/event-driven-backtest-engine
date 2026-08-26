@@ -19,11 +19,12 @@ class EngineConfig:
     initial_capital: float = 1_000_000.0
     fill_on: str = "next_open"  # next_open | next_close
     delay_bars: int = 0
-    slippage_type: str = "percent"  # percent | ticks
-    slippage_value: float = 0.001
+    slippage_type: str = "percent"  # percent | ticks | volume | vol_adjusted
+    slippage_value: float = 0.0005
     tick_size: float = 0.001
     commission_rate: float = 0.0
     lot_size: int = 100
+    fee_profile: str = "ashare_etf"
 
 
 @dataclass
@@ -53,6 +54,7 @@ class CryptoRunConfig:
     lot_size: int = 0
     tick_size: float = 0.01
     initial_capital: float = 10_000.0
+    fee_profile: str = "gate_perp"
 
 
 @dataclass
@@ -83,6 +85,7 @@ def load_config(path: str | Path | None = None) -> AppConfig:
         "tick_size",
         "commission_rate",
         "lot_size",
+        "fee_profile",
     }
     engine_raw = {k: raw[k] for k in engine_keys if k in raw}
     etf_raw = dict(raw.get("etf") or {})
