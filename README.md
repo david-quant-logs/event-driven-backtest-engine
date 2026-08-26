@@ -2,7 +2,7 @@
 
 可审计的事件驱动回测引擎：数据 → 信号 → 成交 → 绩效。基于此前
 [quant-data-pipeline](https://github.com/david-quant-lab/quant-data-pipeline)
-的拉取经验做成独立第 1 周项目。
+的拉取经验继续做回测。
 
 数据源：
 
