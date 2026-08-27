@@ -22,6 +22,16 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Also run week-2 ETF dual-MA full performance report",
     )
+    parser.add_argument(
+        "--dma-vol",
+        action="store_true",
+        help="Week-3: IS/OOS dual-MA + vol-target research on 510300",
+    )
+    parser.add_argument(
+        "--attribution",
+        action="store_true",
+        help="Week-3: cross-platform ablation table",
+    )
     args = parser.parse_args(argv)
 
     print("=== event-driven-backtest-engine ===")
@@ -42,6 +52,16 @@ def main(argv: list[str] | None = None) -> int:
         from examples.run_performance_report import run as run_perf
 
         run_perf(refresh=args.refresh)
+
+    if args.dma_vol:
+        from examples.run_dma_vol_research import run as run_dma
+
+        run_dma(refresh=args.refresh)
+
+    if args.attribution:
+        from examples.run_attribution import run as run_attr
+
+        run_attr(refresh=args.refresh)
 
     print("All done.")
     return 0

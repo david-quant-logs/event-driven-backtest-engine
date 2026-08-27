@@ -28,7 +28,10 @@ def load_frame(stem: Path) -> pd.DataFrame | None:
     parquet = stem.with_suffix(".parquet")
     csv = stem.with_suffix(".csv")
     if parquet.exists():
-        return pd.read_parquet(parquet)
+        try:
+            return pd.read_parquet(parquet)
+        except ImportError:
+            pass
     if csv.exists():
         return pd.read_csv(csv, parse_dates=["datetime"])
     return None

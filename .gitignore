@@ -32,6 +32,10 @@ docs/charts/*
 !docs/charts/.gitkeep
 !docs/charts/*.png
 
+docs/screenshots/*
+!docs/screenshots/.gitkeep
+!docs/screenshots/*.png
+
 .idea/
 .vscode/
 *.swp

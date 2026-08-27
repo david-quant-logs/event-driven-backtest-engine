@@ -101,6 +101,24 @@ def default_fee_matrix() -> dict[str, FeeSpec]:
             notes="Maker/Taker + 简化日度资金费率代理",
         ),
         "zero": FeeSpec(name="zero", asset_class="etf", notes="zero-cost baseline"),
+        "jq_stock_default": FeeSpec(
+            name="jq_stock_default",
+            asset_class="stock",
+            commission_rate=0.0003,
+            commission_min=5.0,
+            stamp_tax_rate=0.001,
+            transfer_fee_rate=0.00001,
+            notes="聚宽股票默认近似：佣金万3最低5元 + 卖出印花税千1（未覆盖 type=fund）",
+        ),
+        "qc_ib_like": FeeSpec(
+            name="qc_ib_like",
+            asset_class="etf",
+            commission_rate=0.00125,
+            commission_min=1.0,
+            stamp_tax_rate=0.0,
+            transfer_fee_rate=0.0,
+            notes="IB 美股约 $0.005/股在 510300≈4 元时约 12.5bps 的费率代理",
+        ),
     }
 
 

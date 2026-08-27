@@ -113,7 +113,7 @@ class PortfolioEngine:
                 target_changed = abs(desired - prev_target[sym]) > 1e-12
                 prev_target[sym] = desired
 
-                if not is_tradable(row):
+                if self.execution.skip_suspended and not is_tradable(row):
                     position_rows.append(
                         {
                             "datetime": dt,
@@ -159,6 +159,9 @@ class PortfolioEngine:
                 elif self.weight_mode == "equal":
                     weight = 1.0 / n_active
                     target_dollar = port_value * weight * np.sign(desired)
+                elif self.weight_mode == "target":
+                    # desired is already a portfolio weight in [-1, 1] (vol targeting).
+                    target_dollar = port_value * float(desired)
                 else:
                     weight = abs(desired) / sum(abs(target[dt].get(s, 0.0)) for s in active)
                     target_dollar = port_value * weight * np.sign(desired)
@@ -354,7 +357,9 @@ class PortfolioEngine:
             total_fees=float(total_fees),
             config={
                 "initial_capital": self.initial_capital,
+                "weight_mode": self.weight_mode,
                 "fill_on": self.execution.fill_on,
+                "skip_suspended": self.execution.skip_suspended,
                 "slippage": resolve_slippage_model(self.execution).to_dict(),
                 "fee_profile": self.execution.fee_profile,
                 "symbol_fee_profiles": self.execution.symbol_fee_profiles,

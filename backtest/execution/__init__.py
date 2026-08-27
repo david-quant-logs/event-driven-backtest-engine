@@ -36,6 +36,7 @@ class ExecutionConfig:
     """Broker-style execution knobs (week-1 compatible + week-2 models)."""
 
     fill_on: str = "next_open"  # next_open | next_close
+    skip_suspended: bool = True
     # Legacy simple knobs (still honored when slippage_model is None)
     slippage_type: str = "percent"  # percent | ticks
     slippage_value: float = 0.001

@@ -1,0 +1,15 @@
+{
+  "fast": 30,
+  "slow": 120,
+  "vol_target": 0.12,
+  "trend_k": 1.0,
+  "atr_window": 20,
+  "vol_lookback": 20,
+  "weight_step": 0.1,
+  "ma_type": "sma",
+  "symbol": "510300",
+  "is_end": "2022-12-31",
+  "oos_start": "2023-01-01",
+  "selection": "max IS Sharpe among max_dd >= -40% (else unconstrained max Sharpe)",
+  "csv": "platforms/quantconnect/data/510300.csv"
+}
